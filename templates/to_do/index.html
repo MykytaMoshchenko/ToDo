@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>
+    TODO List
+    <a href="{% url 'to_do:task-create' %}" class="btn btn-primary link-to-page float-right">Add task</a>
+  </h1>
+
+  {% if task_list %}
+    <ul class="list-inline">
+      {% for task in task_list  %}
+        <li >
+          <form method="post" action="{% url 'to_do:update-status-task' pk=task.id %}" style="display: inline;">
+            {% csrf_token %}
+            {% if task.is_completed %}
+              <button type="submit" class="btn btn-secondary link-to-page float-right">Undo</button>
+            {% else %}
+              <button type="submit" class="btn btn-success link-to-page float-right">Complete</button>
+            {% endif %}
+          </form>
+          <p>
+            <strong>
+              {{ task.content }}
+              {% if task.is_completed == True %} <span class="text-success">Done</span>
+              {% else %} <span class="text-danger">Not done</span>
+              {% endif %}
+            </strong>
+          </p>
+          <p>
+            Created: {{ task.datetime }}
+            {% if task.deadline %} <span class="text-info">Deadline: {{ task.deadline }}</span>
+            {% endif %}
+          </p>
+          <h6 class="text-secondary">
+            Tags: {% for tag in task.tags.values %} {{ tag.name }};{% endfor %}
+          </h6>
+        </li>
+        <hr>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>TODO list is empty, let us checkout and create a task.</p>
+  {% endif %}
+{% endblock %}
