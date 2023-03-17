@@ -47,9 +47,6 @@ class TagDeleteView(generic.DeleteView):
 class UpdateStatusTaskView(View):
     def post(self, request, pk):
         task = get_object_or_404(Task, pk=pk)
-        if task.is_completed:
-            task.is_completed = False
-        else:
-            task.is_completed = True
+        task.is_completed = not task.is_completed
         task.save()
-        return redirect('to_do:index')
+        return redirect("to_do:index")
