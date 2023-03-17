@@ -1,7 +1,6 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic, View
-from django.shortcuts import redirect
 from to_do.forms import TaskCreateForm
 from to_do.models import Task, Tag
 
@@ -10,6 +9,11 @@ class TaskListView(generic.ListView):
     model = Task
     queryset = Task.objects.prefetch_related("tags")
     template_name = "to_do/index.html"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tags"] = Tag.objects.values()
+        return context
 
 
 class TaskCreateView(generic.CreateView):
@@ -43,9 +47,6 @@ class TagDeleteView(generic.DeleteView):
 class UpdateStatusTaskView(View):
     def post(self, request, pk):
         task = get_object_or_404(Task, pk=pk)
-        if task.is_completed:
-            task.is_completed = False
-        else:
-            task.is_completed = True
+        task.is_completed = not task.is_completed
         task.save()
-        return redirect('to_do:index')
+        return redirect("to_do:index")

@@ -11,3 +11,6 @@ setuptools           60.2.0
 sqlparse             0.4.3
 tzdata               2022.7
 wheel                0.37.1
+
+Django~=4.1.7
+python-dotenv~=1.0.0
