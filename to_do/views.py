@@ -1,8 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic, View
 from django.shortcuts import redirect
-from django.views.decorators.http import require_POST
 from to_do.forms import TaskCreateForm
 from to_do.models import Task, Tag
 
@@ -21,7 +20,7 @@ class TaskCreateView(generic.CreateView):
 
 class TagListView(generic.ListView):
     model = Tag
-    queryset = Tag.objects.all()
+    queryset = Tag.objects.prefetch_related("tasks__tags")
 
 
 class TagCreateView(generic.CreateView):
@@ -50,5 +49,3 @@ class UpdateStatusTaskView(View):
             task.is_completed = True
         task.save()
         return redirect('to_do:index')
-
-
